@@ -43,6 +43,7 @@
     }
     else if(e.target.tagName === "SPAN"){
         e.target.parentElement.toggle("checked");
+        e.stopPropagation();
     }
 }, false);
 
