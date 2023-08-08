@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TaskMaster</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="todo">
+            <h2>TaskMaster <img src="images/icon2.png" alt="" ></h2>
+            <div class="row">
+                <form action="/create" method="post">
+                    <input type="text" id="inputCreate" name="inputCreate" placeholder="Activity Here...">
+                    <button type="submit" class="submit">Add</button>
+                </form>
+            </div>
+            <ul id="list">
+              <!-- <li class="checked">Task 1</li>
+                <li>Task 2</li>
+                <li>Task 3</li>--> 
+            </ul>
+        </div>
+    </div>
+    <script>
+        async function fetchTask() {
+        const response = await fetch("/read");
+        const data = await response.json();
+        const list = document.getElementById("list");
+        data.forEach((userTasks) => {
+          const li = document.createElement("li");
+          // list.className = "";
+          li.innerHTML = `
+          <button data-taskid="${userTasks.id}" class="deleteButton" type="button">Delete</button>
+              <span>${userTasks.inputCreate}</span>
+            `;
+          list.appendChild(li);
+
+          list.addEventListener("click", function(e){
+    if(e.target.tagName === "LI"){
+        e.target.classList.toggle("checked");
+    }
+    else if(e.target.tagName === "SPAN"){
+        e.target.parentElement.toggle("checked");
+    }
+}, false);
+
+          const deleteButton = li.querySelector(".deleteButton");
+          deleteButton.addEventListener("click", async () => {
+            const taskId = deleteButton.getAttribute("data-taskid");
+            try {
+              const response = await fetch(`/delete/${taskId}`, { method: "delete" });
+              const data = await response.json();
+              if (response.ok) {
+                li.remove();
+              } else {
+                console.error(data.message);
+              }
+            } catch (error) {
+              console.error("error occurred:", error.message);
+            }
+          });
+        });
+      }
+
+      fetchTask();
+
+    </script>
+</body>
+</html>
